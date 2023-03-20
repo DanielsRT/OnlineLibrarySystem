@@ -76,7 +76,11 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 });
 
 app.get('/account', checkAuthenticated, (req, res) => {
-    res.render('account.ejs');
+    res.render('account.ejs',{user: req.user});
+});
+
+app.get('/account/edit', checkAuthenticated, (req, res) => {
+    res.render('account-edit.ejs',{user: req.user});
 });
 
 app.delete('/logout', (req, res) => {
