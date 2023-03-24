@@ -7,11 +7,10 @@ function initialize(passport, getUserByUsername, getUserById) {
         if (user == null) {
             return done(null, false, {message: 'No user with that username'});
         }
-        var hashedPassword = user.password;//JSON.stringify(user.password);
+        var hashedPassword = user.password;
         console.log('DB password: ' + hashedPassword)
         try {
             if (await bcrypt.compare(password, hashedPassword)) {
-            //if (password === user.password) {
                 return done(null, user);
             } else {
                 return done(null, false, {message: 'Password incorrect'});
