@@ -8,7 +8,6 @@ function initialize(passport, getUserByUsername, getUserById) {
             return done(null, false, {message: 'No user with that username'});
         }
         var hashedPassword = user.password;
-        console.log('DB password: ' + hashedPassword)
         try {
             if (await bcrypt.compare(password, hashedPassword)) {
                 return done(null, user);

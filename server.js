@@ -5,23 +5,14 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
-const database = require('./database');
+const database = require('./database').pool;
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
 const initializePassport = require('./passport-config');
-
-var users = database.execute("select * from users ", (err,result) => {
-    if (err) throw err;
-    var users = JSON.parse(JSON.stringify(result));
-    initializePassport(
-        passport,
-        username => users.find(user => user.username === username),
-        user_id => users.find(user => user.user_id === user_id)
-    );
-    return users;
-});
+const getUsers = require('./database').getUsers;
+const getCatalog = require('./database').getCatalog;
 
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
@@ -35,12 +26,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride('_method'));
 
-
 app.get('/', checkAuthenticated, (req, res) => {
     res.render('index.ejs', {name: req.user.first_name});
 });
 
-app.get('/login', checkNotAuthenticated, (req, res) => {
+app.get('/login', checkNotAuthenticated, async (req, res) => {
+    var users = await getUsers();
+    initializePassport(
+        passport,
+        username => users.find(user => user.username === username),
+        user_id => users.find(user => user.user_id === user_id)
+    );
     res.render('login.ejs');
 });
 
@@ -67,10 +63,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         `INSERT INTO Users (phone, email, username, password, last_name, first_name, isAdmin) VALUES
         ("${phone}","${email}","${username}","${hashedPassword}","${last_name}","${first_name}",${isAdmin})
         `;
-        database.execute(query, (err) => {
-            if (err) throw err;
-            res.redirect('/login');
-        });
+        database.query(query);
+        res.redirect('/login');
         
     } catch {
         res.redirect('/register');
@@ -94,33 +88,39 @@ app.post('/account/edit', checkAuthenticated, (req, res) => {
         var email = req.body.email;
         if(first_name != "") {
             var query = `UPDATE users SET first_name = "${first_name}" WHERE user_id = ${req.user.user_id}`;
-            database.execute(query, (err) => {if (err) throw err;});
+            database.query(query);
             req.user.first_name = first_name;
         }
         if(last_name != "") {
             var query = `UPDATE users SET last_name = "${last_name}" WHERE user_id = ${req.user.user_id}`;
-            database.execute(query, (err) => {if (err) throw err;});
+            database.query(query);
             req.user.last_name = last_name;
         }
         if(username != "") {
             var query = `UPDATE users SET username = "${username}" WHERE user_id = ${req.user.user_id}`;
-            database.execute(query, (err) => {if (err) throw err;});
+            database.query(query);
             req.user.username = username;
         }
         if(email != "") {
             var query = `UPDATE users SET email = "${email}" WHERE user_id = ${req.user.user_id}`;
-            database.execute(query, (err) => {if (err) throw err;});
+            database.query(query);
             req.user.email = email;
         }
         if(phone != "") {
             var query = `UPDATE users SET phone = "${phone}" WHERE user_id = ${req.user.user_id}`;
-            database.execute(query, (err) => {if (err) throw err;});
+            database.query(query);
             req.user.phone = phone;
         }
         res.redirect('/account');
     } catch {
         res.redirect('/account');
     }
+});
+
+app.get('/catalog', checkAuthenticated, async (req, res) => {
+    var catalog = await getCatalog();
+    console.log(catalog);
+    res.render('catalog.ejs',{catalog: catalog});
 });
 
 app.delete('/logout', (req, res) => {

@@ -1,0 +1,19 @@
+<form action="/catalog" method="POST">
+    <div>
+        <label for="userQuery">Search</label>
+        <input type="userQuery" id="userQuery" name="userQuery"
+        required>
+    </div>
+    <button type="submit">Search</button>
+</form>
+
+<ul>
+    <% catalog.forEach(element => { %>
+        <li> Title: <%= element.title %> 
+        <br> Author: <%= element.author %> 
+        <br> Date: <%= element.date %> 
+        <br> Type: <%= element.type %> 
+        <br> Publisher: <%= element.publisher %></li>
+        <br>
+    <% }); %>
+</ul>
