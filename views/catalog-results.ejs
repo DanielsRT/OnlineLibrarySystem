@@ -1,0 +1,20 @@
+<a href="/">Home</a>
+<br>
+<a href="/catalog">Back</a>
+
+<br>
+<h1>You searched for: "<%= userQuery %>"</h1>
+<br>
+<% if (searchResults.length == 0) { %>
+    No Results Found :(
+<% } %>
+<ul>
+    <% searchResults.forEach(element => { %>
+        <li> Title: <%= element.title %> 
+        <br> Author: <%= element.author %> 
+        <br> Date: <%= element.date %> 
+        <br> Type: <%= element.type %> 
+        <br> Publisher: <%= element.publisher %></li>
+        <br>
+    <% }); %>
+</ul>

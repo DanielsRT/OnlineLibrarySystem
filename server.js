@@ -119,8 +119,29 @@ app.post('/account/edit', checkAuthenticated, (req, res) => {
 
 app.get('/catalog', checkAuthenticated, async (req, res) => {
     var catalog = await getCatalog();
-    console.log(catalog);
     res.render('catalog.ejs',{catalog: catalog});
+});
+
+app.post('/catalog', checkAuthenticated, async (req, res) => {
+    var catalog = await getCatalog();
+    var searchResults = [];
+    catalog.forEach(element => {
+        if (element.title.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
+            searchResults.push(element);
+        }
+        if (element.author.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
+            searchResults.push(element);
+        }
+        if (element.publisher.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
+            searchResults.push(element);
+        }
+    });
+    searchResults = [...new Set(searchResults)];
+    
+    res.render('catalog-results.ejs',{
+        userQuery: req.body.userQuery,
+        searchResults: searchResults
+    });
 });
 
 app.delete('/logout', (req, res) => {
