@@ -10,6 +10,18 @@ const pool = mysql.createPool({
     password: '',
     database: process.env.DB_NAME,
     connectionLimit: 20
-});
+}).promise();
 
-module.exports = pool;
+async function getUsers() {
+    const users = pool.query('select * from users');
+    const [result] = await users;
+    return result;
+}
+
+async function getCatalog() {
+    const catalog = pool.query('select * from catalog');
+    const [result] = await catalog;
+    return result;
+}
+
+module.exports = {pool, getUsers, getCatalog};
