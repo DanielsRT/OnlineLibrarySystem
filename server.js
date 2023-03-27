@@ -135,6 +135,9 @@ app.post('/catalog', checkAuthenticated, async (req, res) => {
         if (element.publisher.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
             searchResults.push(element);
         }
+        if (element.type.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
+            searchResults.push(element);
+        }
     });
     searchResults = [...new Set(searchResults)];
     
