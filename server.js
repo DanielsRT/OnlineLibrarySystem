@@ -143,6 +143,7 @@ app.post('/catalog', checkAuthenticated, async (req, res) => {
     searchResults = [...new Set(searchResults)];
     
     res.render('catalog-results.ejs',{
+        isAdmin: req.user.isAdmin,
         userQuery: req.body.userQuery,
         searchResults: searchResults
     });
