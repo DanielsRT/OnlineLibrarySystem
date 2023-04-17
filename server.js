@@ -13,6 +13,7 @@ const methodOverride = require('method-override');
 const initializePassport = require('./passport-config');
 const getUsers = require('./database').getUsers;
 const getCatalog = require('./database').getCatalog;
+const getItem = require('./database').getItem;
 
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
@@ -119,7 +120,7 @@ app.post('/account/edit', checkAuthenticated, (req, res) => {
 
 app.get('/catalog', checkAuthenticated, async (req, res) => {
     var catalog = await getCatalog();
-    res.render('catalog.ejs',{catalog: catalog});
+    res.render('catalog.ejs',{catalog: catalog, user: req.user});
 });
 
 app.post('/catalog', checkAuthenticated, async (req, res) => {
@@ -145,6 +146,33 @@ app.post('/catalog', checkAuthenticated, async (req, res) => {
         userQuery: req.body.userQuery,
         searchResults: searchResults
     });
+});
+
+app.get('/catalog/edit', checkAuthenticated, async (req, res) => {
+    var item = await getItem(req.query.accession);
+    console.log(item)
+    res.render('catalog-edit.ejs',{item: item});
+});
+
+app.post('/catalog/edit', checkAuthenticated, (req, res) => {
+    try {
+        var title = req.body.title;
+        var author = req.body.author;
+        var date = req.body.date;
+        var type = req.body.type;
+        var publisher = req.body.publisher;
+        var isbn = req.body.isbn;
+        var doi = req.body.doi;
+        var accession = req.body.accession;
+
+        var query = `UPDATE catalog SET title = "${title}", author = "${author}", date = "${date}", type = "${type}", publisher = "${publisher}", isbn = "${isbn}", doi = "${doi}" WHERE accession = "${accession}"`;
+
+        database.query(query);
+        res.redirect('/catalog');
+    } catch {
+        res.redirect('/catalog');
+    }
+    
 });
 
 app.delete('/logout', (req, res) => {

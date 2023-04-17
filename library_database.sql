@@ -21,7 +21,7 @@ INSERT INTO Users (username, password, last_name, first_name, isAdmin) VALUES
 ('purple1','password101','Purple','Alvin',false);
 
 CREATE TABLE Catalog (
-	accession FLOAT PRIMARY KEY,
+	accession VARCHAR(25) PRIMARY KEY,
 	title VARCHAR(255) NOT NULL,
 	author VARCHAR(255) NOT NULL,
 	date DATE NOT NULL,
@@ -61,7 +61,7 @@ INSERT INTO Catalog VALUES
 CREATE TABLE Transactions (
 	transaction_id INT AUTO_INCREMENT PRIMARY KEY,
 	date DATE NOT NULL,
-	accession FLOAT,
+	accession VARCHAR(25),
 	user_id INT,
     FOREIGN KEY (accession) REFERENCES Catalog(accession),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)

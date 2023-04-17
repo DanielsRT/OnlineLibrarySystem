@@ -24,4 +24,10 @@ async function getCatalog() {
     return result;
 }
 
-module.exports = {pool, getUsers, getCatalog};
+async function getItem(accession) {
+    const item = pool.query('select * from catalog where accession = ?', accession);
+    const [result] = await item;
+    return result[0];
+}
+
+module.exports = {pool, getUsers, getCatalog, getItem};

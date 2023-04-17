@@ -1,0 +1,36 @@
+<h1>Edit Item</h1>
+<form action="/catalog/edit" method="POST">
+    <div>
+        <input type="hidden" id="accession" name="accession" size="40" value="<%=item.accession%>">
+    </div>
+    <div>
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" size="40" value="<%=item.title%>">
+    </div>
+    <div>
+        <label for="author">Author</label>
+        <input type="author" id="author" name="author" size="40" value="<%=item.author%>">
+    </div>
+    <div>
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" size="40" value="<%=item.date%>">
+    </div>
+    <div>
+        <label for="type">Type</label>
+        <input type="type" id="type" name="type" size="40" value="<%=item.type%>">
+    </div>
+    <div>
+        <label for="publisher">Publisher</label>
+        <input type="publisher" id="publisher" name="publisher" size="40" value="<%=item.publisher%>">
+    </div>
+    <div>
+        <label for="isbn">ISBN</label>
+        <input type="isbn" id="isbn" name="isbn" size="40" value="<%=item.isbn%>">
+    </div>
+    <div>
+        <label for="doi">DOI</label>
+        <input type="doi" id="doi" name="doi" value="<%=item.doi%>">
+    </div>
+    <button type="submit">Save Changes</button>
+</form>
+<a href="/catalog">Back</a>
