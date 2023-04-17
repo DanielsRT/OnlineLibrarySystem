@@ -1,0 +1,14 @@
+<h1>User Loans</h1>
+
+<ul>
+    <% items.forEach(element => { %>
+        <li> Title: <%= element.title %> 
+        <br> Author: <%= element.author %> 
+        <br> Date Loaned: <%= element.checkout_date %> 
+        <br> Due Date: <%= element.return_date %></li>
+        <br>
+    <% }); %>
+</ul>
+
+<br>
+<a href="/">Home</a>

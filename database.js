@@ -30,4 +30,14 @@ async function getItem(accession) {
     return result[0];
 }
 
-module.exports = {pool, getUsers, getCatalog, getItem};
+async function getUserLoans() {
+    const items = pool.query('select loans.user_id, loans.checkout_date, loans.return_date, catalog.title, catalog.author from loans inner join catalog on loans.accession = catalog.accession');
+    const [result] = await items;
+    return result;
+    items.array.forEach(element => {
+        
+    });
+}
+
+
+module.exports = {pool, getUsers, getCatalog, getItem, getUserLoans};

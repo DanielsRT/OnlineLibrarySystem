@@ -14,6 +14,7 @@ const initializePassport = require('./passport-config');
 const getUsers = require('./database').getUsers;
 const getCatalog = require('./database').getCatalog;
 const getItem = require('./database').getItem;
+const getUserLoans = require('./database').getUserLoans;
 
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
@@ -78,6 +79,18 @@ app.get('/account', checkAuthenticated, (req, res) => {
 
 app.get('/account/edit', checkAuthenticated, (req, res) => {
     res.render('account-edit.ejs');
+});
+
+app.get('/loans', checkAuthenticated, async (req, res) => {
+    var loans = await getUserLoans();
+    var items = [];
+    loans.forEach(element => {
+        if (element.user_id == req.user.user_id) {
+            items.push(element);
+        }
+    });
+    
+    res.render('loans.ejs',{items: items});
 });
 
 app.post('/account/edit', checkAuthenticated, (req, res) => {
@@ -151,7 +164,6 @@ app.post('/catalog', checkAuthenticated, async (req, res) => {
 
 app.get('/catalog/edit', checkAuthenticated, async (req, res) => {
     var item = await getItem(req.query.accession);
-    console.log(item)
     res.render('catalog-edit.ejs',{item: item});
 });
 
@@ -174,6 +186,35 @@ app.post('/catalog/edit', checkAuthenticated, (req, res) => {
         res.redirect('/catalog');
     }
     
+});
+
+app.get('/catalog/confirmation', checkAuthenticated, async (req, res) => {
+    var item = await getItem(req.query.accession);
+    res.render('catalog-confirm.ejs',{item: item});
+});
+
+app.post('/catalog/confirmation', checkAuthenticated, (req, res) => {
+    try {
+        var accession = req.body.accession;
+        var user_id = req.user.user_id;
+        var title = req.body.title;
+        var author = req.body.author;
+        var checkout_date = new Date();
+        var return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
+        
+        var loan_query = 
+        `insert into loans (accession, checkout_date, return_date, user_id) values` +
+        `("${accession}","${checkout_date}","${return_date}",${user_id})`
+        var transaction_query = 
+        `insert into transactions (date, accession, user_id) values` +
+        `("${checkout_date}", "${accession}",${user_id})`
+        database.query(loan_query);
+        database.query(transaction_query);
+        
+        res.redirect('/catalog');
+    } catch {
+        res.redirect('/catalog');
+    }
 });
 
 app.delete('/logout', (req, res) => {

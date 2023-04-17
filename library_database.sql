@@ -12,14 +12,6 @@ CREATE TABLE Users (
 	isAdmin BOOLEAN NOT NULL
 );
 
-INSERT INTO Users (username, password, last_name, first_name, isAdmin) VALUES 
-('admin','password123','Doe','John',true),
-('turtle3','password345','Turtle','Frank',false),
-('otter5','password567','Otter','Steve',false),
-('lucky7','password789','Lucky','Timmy',false),
-('rocky9','password910','Rocky','Jim',false),
-('purple1','password101','Purple','Alvin',false);
-
 CREATE TABLE Catalog (
 	accession VARCHAR(25) PRIMARY KEY,
 	title VARCHAR(255) NOT NULL,
@@ -30,6 +22,32 @@ CREATE TABLE Catalog (
 	isbn VARCHAR(255),
 	doi VARCHAR(255)
 );
+
+CREATE TABLE Loans (
+	accession VARCHAR(25) PRIMARY KEY,
+	checkout_date DATE NOT NULL,
+	return_date DATE NOT NULL,
+	user_id INT,
+	FOREIGN KEY (accession) REFERENCES Catalog(accession),
+	FOREIGN KEY (user_id) REFERENCES Users(user_id)
+)
+
+CREATE TABLE Transactions (
+	transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+	date DATE NOT NULL,
+	accession VARCHAR(25),
+	user_id INT NOT NULL,
+    FOREIGN KEY (accession) REFERENCES Catalog(accession),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+INSERT INTO Users (username, password, last_name, first_name, isAdmin) VALUES 
+('admin','password123','Doe','John',true),
+('turtle3','password345','Turtle','Frank',false),
+('otter5','password567','Otter','Steve',false),
+('lucky7','password789','Lucky','Timmy',false),
+('rocky9','password910','Rocky','Jim',false),
+('purple1','password101','Purple','Alvin',false);
 
 -- Add Books
 INSERT INTO Catalog VALUES 
@@ -58,15 +76,6 @@ INSERT INTO Catalog VALUES
 (2023.8,"Average Cuteness of Dog Breeds",'Tommy Halworth','2022-06-13','Scholarly Article','veterinarian Society',null,"10.4691/vetsoc.16759"),
 (2023.9,"Designing a Time Machine",'Gretchen Sawyer','2130-02-06','Scholarly Article','Science Weekly',null,"10.7493/science.90141");
     
-CREATE TABLE Transactions (
-	transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-	date DATE NOT NULL,
-	accession VARCHAR(25),
-	user_id INT,
-    FOREIGN KEY (accession) REFERENCES Catalog(accession),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
-
 -- Add Transactions
 INSERT INTO Transactions (date, accession, user_id) VALUES 
 ('2022-09-23','2022.3',2),

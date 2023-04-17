@@ -1,0 +1,19 @@
+<h1>Confirmation</h1>
+
+This item is available:
+<ul>
+    <li>Title: <%= item.title %> </li>
+    <li>Author: <%= item.author %> </li>
+    <li>Date: <%= item.date %> </li>
+    <li>Type: <%= item.type %> </li>
+    <li>Publisher: <%= item.publisher %></li>
+ </ul>
+
+Would you  like to check it out?
+<form action="/catalog/confirmation" method="POST">
+    <input type="hidden" id="accession" name="accession" value="<%=item.accession%>">
+    <button>Confirm</button>
+</form>
+<form action="/catalog" method="GET">
+    <button>Cancel</button>
+</form>
