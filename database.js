@@ -31,13 +31,23 @@ async function getItem(accession) {
 }
 
 async function getUserLoans() {
-    const items = pool.query('select loans.user_id, loans.checkout_date, loans.return_date, catalog.title, catalog.author from loans inner join catalog on loans.accession = catalog.accession');
+    const items = pool.query('select loans.user_id, loans.checkout_date, loans.return_date, loans.accession,' +
+        'catalog.title, catalog.author from loans inner join catalog on loans.accession = catalog.accession');
     const [result] = await items;
     return result;
-    items.array.forEach(element => {
-        
-    });
 }
 
+async function isLoaned(accession) {
+    const items = pool.query('select * from loans where accession = ?', accession);
+    const [result] = await items;
+    return result.length !== 0;
+}
 
-module.exports = {pool, getUsers, getCatalog, getItem, getUserLoans};
+async function getUserReservations() {
+    const items = pool.query('select reservations.user_id, reservations.accession, catalog.title, catalog.author, ' +
+    'catalog.type, catalog.publisher from reservations inner join catalog on reservations.accession = catalog.accession');
+    const [result] = await items;
+    return result;
+}
+
+module.exports = {pool, getUsers, getCatalog, getItem, getUserLoans, isLoaned, getUserReservations};

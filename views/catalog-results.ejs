@@ -15,6 +15,8 @@
         <br> Date: <%= element.date %> 
         <br> Type: <%= element.type %> 
         <br> Publisher: <%= element.publisher %></li>
+        <a href="/catalog/confirmation?accession=<%=element.accession%>">Check Out</a>
+        <br>
         <% if (isAdmin) { %>
             <a href="/catalog/edit?accession=<%=element.accession%>">Edit</a>
             <br>

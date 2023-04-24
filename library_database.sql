@@ -6,7 +6,7 @@ CREATE TABLE Users (
 	phone INT,
 	email VARCHAR(25),
 	username VARCHAR(25) NOT NULL,
-	password VARCHAR(25) NOT NULL,
+	password VARCHAR(255) BINARY NOT NULL,
 	last_name VARCHAR(25),
 	first_name VARCHAR(25),
 	isAdmin BOOLEAN NOT NULL
@@ -30,14 +30,22 @@ CREATE TABLE Loans (
 	user_id INT,
 	FOREIGN KEY (accession) REFERENCES Catalog(accession),
 	FOREIGN KEY (user_id) REFERENCES Users(user_id)
-)
+);
 
 CREATE TABLE Transactions (
 	transaction_id INT AUTO_INCREMENT PRIMARY KEY,
 	date DATE NOT NULL,
-	accession VARCHAR(25),
+	accession VARCHAR(25) NOT NULL,
 	user_id INT NOT NULL,
     FOREIGN KEY (accession) REFERENCES Catalog(accession),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Reservations (
+	priority INT AUTO_INCREMENT PRIMARY KEY,
+	accession VARCHAR(25) NOT NULL,
+	user_id INT NOT NULL,
+	FOREIGN KEY (accession) REFERENCES Catalog(accession),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 

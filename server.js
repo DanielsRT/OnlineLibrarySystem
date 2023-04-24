@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
+
 const bcrypt = require('bcrypt');
 const database = require('./database').pool;
 const passport = require('passport');
@@ -15,10 +16,13 @@ const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
 const initializePassport = require('./passport-config');
+
 const getUsers = require('./database').getUsers;
 const getCatalog = require('./database').getCatalog;
 const getItem = require('./database').getItem;
 const getUserLoans = require('./database').getUserLoans;
+const isLoaned = require('./database').isLoaned;
+const getUserReservations = require('./database').getUserReservations;
 
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
@@ -193,8 +197,10 @@ app.post('/catalog/edit', checkAuthenticated, (req, res) => {
 });
 
 app.get('/catalog/confirmation', checkAuthenticated, async (req, res) => {
+    var isUnavailable = await isLoaned(req.query.accession);
     var item = await getItem(req.query.accession);
-    res.render('catalog-confirm.ejs',{item: item});
+    res.render('catalog-confirm.ejs',{item: item, isUnavailable: isUnavailable});
+    
 });
 
 app.post('/catalog/confirmation', checkAuthenticated, (req, res) => {
@@ -203,8 +209,8 @@ app.post('/catalog/confirmation', checkAuthenticated, (req, res) => {
         var user_id = req.user.user_id;
         var title = req.body.title;
         var author = req.body.author;
-        var checkout_date = new Date();
-        var return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
+        let checkout_date = new Date();
+        let return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
         
         var loan_query = 
         `insert into loans (accession, checkout_date, return_date, user_id) values` +
@@ -219,6 +225,69 @@ app.post('/catalog/confirmation', checkAuthenticated, (req, res) => {
     } catch {
         res.redirect('/catalog');
     }
+});
+
+app.post('/reserve', checkAuthenticated, async (req, res) => {
+    try {
+        var query = 
+        `insert into reservations (accession, user_id) values` +
+        `("${req.body.accession}",${req.user.user_id})`
+        ;
+        database.query(query);
+        
+        res.redirect('/catalog');
+    } catch {
+        res.redirect('/catalog');
+    }
+});
+
+app.post('/loans/return', checkAuthenticated, async (req, res) => {
+    let query = `delete from loans where accession = "${req.body.accession}"`;
+    database.query(query);
+    let reservations = await getUserReservations();
+
+    var count = 0;
+    var reservation_id = -1;
+    reservations.forEach(element => {
+        if (element.accession == req.body.accession && count === 0) {
+            reservation_id = element.user_id;
+            count = count + 1;
+        }
+    });
+
+    if(count > 0) {
+        database.query(`delete from reservations where accession = "${req.body.accession}" && user_id = ${reservation_id}`);
+        let checkout_date = new Date(Date.now());
+        let return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
+        let loan_query = 
+        `insert into loans (accession, checkout_date, return_date, user_id) values` +
+        `("${req.body.accession}","${checkout_date}","${return_date}",${reservation_id})`
+        var transaction_query = 
+        `insert into transactions (date, accession, user_id) values` +
+        `("${checkout_date}", "${req.body.accession}",${reservation_id})`
+        database.query(loan_query);
+        database.query(transaction_query);
+    }
+
+    res.redirect('/loans');
+});
+
+app.get('/reservations', checkAuthenticated, async (req, res) => {
+    var reservations = await getUserReservations();
+    var items = [];
+    reservations.forEach(element => {
+        if (element.user_id == req.user.user_id) {
+            items.push(element);
+        }
+    });
+    
+    res.render('reservations.ejs',{items: items});
+});
+
+app.post('/reservations', checkAuthenticated, (req, res) => {
+    let query = `delete from reservations where accession = "${req.body.accession}" && user_id = ${req.user.user_id}`;
+    database.query(query);
+    res.redirect('/reservations');
 });
 
 app.delete('/logout', (req, res) => {
@@ -242,9 +311,11 @@ function checkNotAuthenticated(req, res, next) {
     next();
 }
 
-const sslServer = https.createServer({
+const httpsOptions = {
     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
-}, app);
+    cert: fs.readFileSync(path.join(__dirname, 'cert', 'librarymanagement.crt'))
+};
 
-sslServer.listen(3000, () => console.log('Secure server on port 3000'));
+https.createServer(httpsOptions, app).listen(3000, function () {
+    console.log('Secure Server on port 3000');
+});
