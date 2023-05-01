@@ -15,7 +15,8 @@ const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
-const initializePassport = require('./passport-config');
+const initializePassport = require('./passport-config').initialize  ;
+const formatDate = require('./passport-config').formatDate;
 
 const getUsers = require('./database').getUsers;
 const getCatalog = require('./database').getCatalog;
@@ -211,12 +212,14 @@ app.post('/catalog/confirmation', checkAuthenticated, (req, res) => {
         var author = req.body.author;
         let checkout_date = new Date();
         let return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
+        checkout_date = formatDate(checkout_date);
+        return_date = formatDate(return_date);
         
         var loan_query = 
-        `insert into loans (accession, checkout_date, return_date, user_id) values` +
+        `insert into loans (accession, checkout_datetime, return_datetime, user_id) values` +
         `("${accession}","${checkout_date}","${return_date}",${user_id})`
         var transaction_query = 
-        `insert into transactions (date, accession, user_id) values` +
+        `insert into transactions (datetime, accession, user_id) values` +
         `("${checkout_date}", "${accession}",${user_id})`
         database.query(loan_query);
         database.query(transaction_query);
@@ -257,13 +260,15 @@ app.post('/loans/return', checkAuthenticated, async (req, res) => {
 
     if(count > 0) {
         database.query(`delete from reservations where accession = "${req.body.accession}" && user_id = ${reservation_id}`);
-        let checkout_date = new Date(Date.now());
+        let checkout_date = new Date();
         let return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
+        checkout_date = formatDate(checkout_date);
+        return_date = formatDate(return_date);
         let loan_query = 
-        `insert into loans (accession, checkout_date, return_date, user_id) values` +
+        `insert into loans (accession, checkout_datetime, return_datetime, user_id) values` +
         `("${req.body.accession}","${checkout_date}","${return_date}",${reservation_id})`
         var transaction_query = 
-        `insert into transactions (date, accession, user_id) values` +
+        `insert into transactions (datetime, accession, user_id) values` +
         `("${checkout_date}", "${req.body.accession}",${reservation_id})`
         database.query(loan_query);
         database.query(transaction_query);

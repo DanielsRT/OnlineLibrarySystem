@@ -25,8 +25,8 @@ CREATE TABLE Catalog (
 
 CREATE TABLE Loans (
 	accession VARCHAR(25) PRIMARY KEY,
-	checkout_date DATE NOT NULL,
-	return_date DATE NOT NULL,
+	checkout_datetime DATETIME NOT NULL,
+	return_datetime DATETIME NOT NULL,
 	user_id INT,
 	FOREIGN KEY (accession) REFERENCES Catalog(accession),
 	FOREIGN KEY (user_id) REFERENCES Users(user_id)
@@ -34,7 +34,7 @@ CREATE TABLE Loans (
 
 CREATE TABLE Transactions (
 	transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-	date DATE NOT NULL,
+	datetime DATETIME NOT NULL,
 	accession VARCHAR(25) NOT NULL,
 	user_id INT NOT NULL,
     FOREIGN KEY (accession) REFERENCES Catalog(accession),
@@ -47,6 +47,13 @@ CREATE TABLE Reservations (
 	user_id INT NOT NULL,
 	FOREIGN KEY (accession) REFERENCES Catalog(accession),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Logins (
+	session_id INT AUTO_INCREMENT PRIMARY KEY,
+	datetime DATETIME NOT NULL,
+	user_id INT NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 INSERT INTO Users (username, password, last_name, first_name, isAdmin) VALUES 
