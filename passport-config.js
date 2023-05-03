@@ -44,4 +44,15 @@ function formatDate(date) {
     return date;
 }
 
-module.exports = {initialize, formatDate};
+function returnDate(date) {
+    var pad = function(num) { return ('00'+num).slice(-2) };
+    date = date.getUTCFullYear()         + '-' +
+        pad(date.getUTCMonth() + 2)  + '-' +
+        pad(date.getUTCDate())       + ' ' +
+        pad(date.getUTCHours())      + ':' +
+        pad(date.getUTCMinutes())    + ':' +
+        pad(date.getUTCSeconds());
+    return date;
+}
+
+module.exports = {initialize, formatDate, returnDate};

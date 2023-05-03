@@ -18,6 +18,7 @@ const methodOverride = require('method-override');
 const exp = require('constants');
 const initializePassport = require('./passport-config').initialize  ;
 const formatDate = require('./passport-config').formatDate;
+const returnDate = require('./passport-config').returnDate;
 
 const getUsers = require('./database').getUsers;
 const getCatalog = require('./database').getCatalog;
@@ -213,10 +214,9 @@ app.post('/catalog/confirmation', checkAuthenticated, (req, res) => {
         var user_id = req.user.user_id;
         var title = req.body.title;
         var author = req.body.author;
-        let checkout_date = new Date();
-        let return_date = new Date(checkout_date.setMonth(checkout_date.getMonth()+8));
-        checkout_date = formatDate(checkout_date);
-        return_date = formatDate(return_date);
+        let checkout_date = formatDate(new Date());
+        let return_date = returnDate(new Date());
+        
         
         var loan_query = 
         `insert into loans (accession, checkout_datetime, return_datetime, user_id) values` +
