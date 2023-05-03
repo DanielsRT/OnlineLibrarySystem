@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login History</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Transaction History</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date/Time</th>
+                <th>Accession</th>
+                <th>User ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(var i = 0; i < transactions.length; i++) { %>
+            <tr>
+                <td><%= transactions[i].transaction_id %></td>
+                <td><%= transactions[i].datetime %></td>
+                <td><%= transactions[i].accession %></td>
+                <td><%= transactions[i].user_id %></td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/">Home</a>
+</body>
+</html>

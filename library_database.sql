@@ -90,20 +90,4 @@ INSERT INTO Catalog VALUES
 (2023.7,"Research on Human Hearing",'Bill Dalian','2022-10-28','Scholarly Article','BioFuture',null,"10.6152/biof.16592"),
 (2023.8,"Average Cuteness of Dog Breeds",'Tommy Halworth','2022-06-13','Scholarly Article','veterinarian Society',null,"10.4691/vetsoc.16759"),
 (2023.9,"Designing a Time Machine",'Gretchen Sawyer','2130-02-06','Scholarly Article','Science Weekly',null,"10.7493/science.90141");
-    
--- Add Transactions
-INSERT INTO Transactions (date, accession, user_id) VALUES 
-('2022-09-23','2022.3',2),
-('2022-10-12','2022.5',2),
-('2022-12-01','2022.6',2),
-('2023-02-09','2023.2',2),
-('2023-04-14','2023.9',2),
-('2022-12-09','2022.1',3),
-('2023-03-11','2023.3',3),
-('2022-11-19','2022.6',4),
-('2023-04-24','2023.7',4),
-('2022-10-21','2022.2',5),
-('2023-07-13','2023.3',5),
-('2022-05-01','2022.4',6),
-('2023-02-10','2023.4',6);
 

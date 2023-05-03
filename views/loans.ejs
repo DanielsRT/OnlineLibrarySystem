@@ -4,8 +4,8 @@
     <% items.forEach(element => { %>
         <li> Title: <%= element.title %> 
         <br> Author: <%= element.author %> 
-        <br> Date Loaned: <%= element.checkout_date %> 
-        <br> Due Date: <%= element.return_date %></li>
+        <br> Date Loaned: <%= element.checkout_datetime %> 
+        <br> Due Date: <%= element.return_datetime %></li>
         <form action="/loans/return" method="POST">
             <input type="hidden" id="accession" name="accession" value="<%=element.accession%>">
             <button>Return</button>

@@ -31,7 +31,7 @@ async function getItem(accession) {
 }
 
 async function getUserLoans() {
-    const items = pool.query('select loans.user_id, loans.checkout_date, loans.return_date, loans.accession,' +
+    const items = pool.query('select loans.user_id, loans.checkout_datetime, loans.return_datetime, loans.accession,' +
         'catalog.title, catalog.author from loans inner join catalog on loans.accession = catalog.accession');
     const [result] = await items;
     return result;
@@ -50,4 +50,16 @@ async function getUserReservations() {
     return result;
 }
 
-module.exports = {pool, getUsers, getCatalog, getItem, getUserLoans, isLoaned, getUserReservations};
+async function getLogins() {
+    const items = pool.query('select * from logins');
+    const [result] = await items;
+    return result;
+}
+
+async function getTransactions() {
+    const items = pool.query('select * from transactions');
+    const [result] = await items;
+    return result;
+}
+
+module.exports = {pool, getUsers, getCatalog, getItem, getUserLoans, isLoaned, getUserReservations, getLogins, getTransactions};

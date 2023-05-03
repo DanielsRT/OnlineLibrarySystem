@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login History</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Login History</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Session ID</th>
+                <th>Date/Time</th>
+                <th>User ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(var i = 0; i < logins.length; i++) { %>
+            <tr>
+                <td><%= logins[i].session_id %></td>
+                <td><%= logins[i].datetime %></td>
+                <td><%= logins[i].user_id %></td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/">Home</a>
+</body>
+</html>

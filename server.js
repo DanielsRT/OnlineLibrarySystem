@@ -15,6 +15,7 @@ const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
+const exp = require('constants');
 const initializePassport = require('./passport-config').initialize  ;
 const formatDate = require('./passport-config').formatDate;
 
@@ -24,8 +25,12 @@ const getItem = require('./database').getItem;
 const getUserLoans = require('./database').getUserLoans;
 const isLoaned = require('./database').isLoaned;
 const getUserReservations = require('./database').getUserReservations;
+const getLogins = require('./database').getLogins;
+const getTransactions = require('./database').getTransactions;
 
 app.set('view-engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(session({
@@ -38,7 +43,7 @@ app.use(passport.session());
 app.use(methodOverride('_method'));
 
 app.get('/', checkAuthenticated, (req, res) => {
-    res.render('index.ejs', {name: req.user.first_name});
+    res.render('index.ejs', {user: req.user});
 });
 
 app.get('/login', checkNotAuthenticated, async (req, res) => {
@@ -293,6 +298,16 @@ app.post('/reservations', checkAuthenticated, (req, res) => {
     let query = `delete from reservations where accession = "${req.body.accession}" && user_id = ${req.user.user_id}`;
     database.query(query);
     res.redirect('/reservations');
+});
+
+app.get('/data/transactions', checkAuthenticated, async (req, res) => {
+    var transactions = await getTransactions();
+    res.render('transaction-history.ejs',{transactions: transactions});
+});
+
+app.get('/data/logins', checkAuthenticated, async (req, res) => {
+    var logins = await getLogins();
+    res.render('login-history.ejs',{logins: logins});
 });
 
 app.delete('/logout', (req, res) => {
