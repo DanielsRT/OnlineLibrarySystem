@@ -152,27 +152,25 @@ app.get('/catalog', checkAuthenticated, async (req, res) => {
 
 app.post('/catalog', checkAuthenticated, async (req, res) => {
     var catalog = await getCatalog();
+    var resultMap = new Map();
     var searchResults = [];
     catalog.forEach(element => {
-        if (element.title.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
-            searchResults.push(element);
-        }
-        if (element.author.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
-            searchResults.push(element);
-        }
-        if (element.publisher.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
-            searchResults.push(element);
-        }
-        if (element.type.toLowerCase().includes(req.body.userQuery.toLowerCase())) {
-            searchResults.push(element);
-        }
+        let count = 0;
+        let regex = new RegExp(req.body.userQuery, "gi");
+        count = count + (element.title.match(regex) || []).length;
+        count = count + (element.author.match(regex) || []).length;
+        count = count + (element.publisher.match(regex) || []).length;
+        count = count + (element.type.match(regex) || []).length;
+        if (count > 0)
+            resultMap.set(element,count);
     });
-    searchResults = [...new Set(searchResults)];
     
+    let sortedMap = new Map([...resultMap.entries()].sort((a, b) => a[1] - b[1]));
+
     res.render('catalog-results.ejs',{
         isAdmin: req.user.isAdmin,
         userQuery: req.body.userQuery,
-        searchResults: searchResults
+        searchResults: sortedMap
     });
 });
 
