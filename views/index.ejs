@@ -1,10 +1,19 @@
-<h1>Hi <%= name %></h1>
+<h1>Hi <%= user.first_name %></h1>
 <a href="/account">Account</a>
 <br>
 <a href="/catalog">Catalog</a>
 <br>
 <a href="/loans">Loans</a>
 <br>
+<a href="/reservations">Reservations</a>
+<br>
+<% if (user.isAdmin) { %>
+    <a href="/data/transactions">Transactions</a>
+    <br>
+    <a href="/data/logins">Login History</a>
+    <br>
+<% } %>
+<br><br>
 <form action="/logout?_method=DELETE" method="POST">
     <button type="submit">Log Out</button>
 </form>

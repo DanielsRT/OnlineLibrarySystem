@@ -9,14 +9,16 @@
     No Results Found :(
 <% } %>
 <ul>
-    <% searchResults.forEach(element => { %>
-        <li> Title: <%= element.title %> 
-        <br> Author: <%= element.author %> 
-        <br> Date: <%= element.date %> 
-        <br> Type: <%= element.type %> 
-        <br> Publisher: <%= element.publisher %></li>
+    <% searchResults.forEach((value, key) => { %>
+        <li> Title: <%= key.title %> 
+        <br> Author: <%= key.author %> 
+        <br> Date: <%= key.date %> 
+        <br> Type: <%= key.type %> 
+        <br> Publisher: <%= key.publisher %></li>
+        <a href="/catalog/confirmation?accession=<%=key.accession%>">Check Out</a>
+        <br>
         <% if (isAdmin) { %>
-            <a href="/catalog/edit?accession=<%=element.accession%>">Edit</a>
+            <a href="/catalog/edit?accession=<%=key.accession%>">Edit</a>
             <br>
         <% } %>
         <br>
