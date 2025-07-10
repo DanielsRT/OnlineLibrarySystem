@@ -1,6 +1,6 @@
 # OnlineLibrarySystem
 
-A full-stack, secure online library management system built with Node.js and MySQL. This project allows users to browse and manage a library catalog, handle loans and reservations, and provides admin tools for system oversight.
+A full-stack, secure online library management system built with Node.js and MySQL. This project allows users to browse and manage a library catalog, handle loans and reservations, and provides admin tools for system oversight. This application uses Passport.js for authentication and Express.js as the application framework.
 
 ## Features
 
