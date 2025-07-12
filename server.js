@@ -30,7 +30,7 @@ const getLogins = require('./database').getLogins;
 const getTransactions = require('./database').getTransactions;
 
 app.set('view-engine', 'ejs');
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
