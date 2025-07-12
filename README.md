@@ -2,6 +2,8 @@
 
 A full-stack, secure online library management system built with Node.js and MySQL. This project allows users to browse and manage a library catalog, handle loans and reservations, and provides admin tools for system oversight. This application uses Passport.js for authentication and Express.js as the application framework.
 
+<img width="1908" height="907" alt="image" src="https://github.com/user-attachments/assets/07d16849-aa62-406a-b549-21fbea9c93db" />
+
 ## Features
 
 - **User Authentication**: Secure registration and login with hashed passwords.
