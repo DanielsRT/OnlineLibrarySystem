@@ -298,12 +298,12 @@ app.post('/reservations', checkAuthenticated, (req, res) => {
     res.redirect('/reservations');
 });
 
-app.get('/data/transactions', checkAuthenticated, async (req, res) => {
+app.get('/data/transactions', checkAdmin, async (req, res) => {
     var transactions = await getTransactions();
     res.render('transaction-history.ejs',{transactions: transactions});
 });
 
-app.get('/data/logins', checkAuthenticated, async (req, res) => {
+app.get('/data/logins', checkAdmin, async (req, res) => {
     var logins = await getLogins();
     res.render('login-history.ejs',{logins: logins});
 });
@@ -317,6 +317,13 @@ app.delete('/logout', (req, res) => {
 
 function checkAuthenticated(req, res, next) {
     if(req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login')
+}
+
+function checkAdmin(req, res, next) {
+    if(req.isAuthenticated() && req.user.isAdmin == true) {
         return next();
     }
     res.redirect('/login')

@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
-    "nodemon": "^2.0.21"
+    "nodemon": "^2.0.21",
+    "selfsigned": "^2.4.1"
   }
 }
